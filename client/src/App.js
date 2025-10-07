@@ -6,7 +6,6 @@ import Footer from "./Components/Footer";
 import Profile from "./Components/Profile";
 import Register from "./Components/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Container, Row, Col } from "reactstrap"; //import the Reactstrap Components
 

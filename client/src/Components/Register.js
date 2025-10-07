@@ -4,9 +4,11 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
+import { useSelector } from "react-redux";
 import { Button, Col, Container, Row } from "reactstrap";
 import logo from "../Images/logo-t.png";
 const Register = () => {
+  const userList = useSelector((state) => state.users.value);
   //For form validation using react-hook-form
   const {
     register,
@@ -15,6 +17,7 @@ const Register = () => {
   } = useForm({
     resolver: yupResolver(userSchemaValidation), //Associate your Yup validation schema using the resolver
   });
+
   // Handle form submission
   const onSubmit = (data) => {
     console.log("Form Data", data); // You can handle the form submission here
@@ -66,6 +69,34 @@ const Register = () => {
           </Col>
         </Row>
       </form>
+      <Row>
+        <Col md={6}>
+          <h2>list of Users</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userList.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.email}</td>
+                  <td>{user.name}</td>
+                  <td>{user.password}</td>
+                  <td>
+                    <Button color="danger">delete</Button>{" "}
+                    <Button color="success">update</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Col>
+      </Row>
     </Container>
   );
 };
