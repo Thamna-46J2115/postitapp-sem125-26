@@ -3,9 +3,8 @@ import * as yup from "yup";
 
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { registerUser } from "../Features/UserSlice";
 
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,
   Col,
@@ -18,20 +17,20 @@ import {
 } from "reactstrap";
 
 import { useSelector, useDispatch } from "react-redux";
-import { addUser, deleteUser } from "../Features/UserSlice";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { addUser, deleteUser, updateUser } from "../Features/UserSlice";
+import { useParams } from "react-router-dom";
 
 //For form validation using react-hook-form
 
-const Register = () => {
+const UpdateUser = () => {
   const userList = useSelector((state) => state.users.value);
 
+  const { user_email, user_name, user_password } = useParams();
   //Declare your state variables
-  const [name, setname] = useState("");
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
-  const [confirmPassword, setconfirmPassword] = useState("");
+  const [name, setname] = useState(user_name);
+  const [email, setemail] = useState(user_email);
+  const [password, setpassword] = useState(user_password);
+  const [confirmPassword, setconfirmPassword] = useState(user_password);
 
   const {
     register,
@@ -45,7 +44,6 @@ const Register = () => {
 
   // Handle form submission
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     try {
@@ -56,30 +54,32 @@ const Register = () => {
         email: data.email,
         password: data.password,
       };
-      dispatch(registerUser(userData));
-      alert("Added Successfully.");
-      navigate("/login");
+      dispatch(addUser(userData));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleDelete = (email) => {
-    try {
-      dispatch(deleteUser(email));
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUpdate = () => {
+    const userData = {
+      name: name, //create an object with the values from the state variables
+      email: email,
+      password: password,
+    };
+    dispatch(updateUser(userData)); //use the useDispatch hook to dispatch an action, passing as parameter the userData
   };
+
   return (
     <Container fluid>
-      <Form className="div-form" onSubmit={handleSubmit(onSubmit)}>
+      <Form className="div-form" onSubmit={handleSubmit(handleUpdate)}>
+        <h1>Update User</h1>
         <Row>
           <Col md={6}>
             Name<br></br>
             <input
               type="text"
               name="name"
+              value={name}
               {...register("name", {
                 value: name,
                 onChange: (e) => setname(e.target.value),
@@ -95,6 +95,7 @@ const Register = () => {
             <input
               type="email"
               name="email"
+              value={email}
               {...register("email", {
                 value: email,
                 onChange: (e) => setemail(e.target.value),
@@ -110,6 +111,7 @@ const Register = () => {
             <input
               type="password"
               name="password"
+              value={password}
               {...register("password", {
                 value: password,
                 onChange: (e) => setpassword(e.target.value),
@@ -125,6 +127,7 @@ const Register = () => {
             <input
               type="password"
               name="confirmpassword"
+              value={confirmPassword}
               {...register("confirmPassword", {
                 value: confirmPassword,
                 onChange: (e) => setconfirmPassword(e.target.value),
@@ -136,7 +139,7 @@ const Register = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Button>Register</Button>
+            <Button>UpdateUser</Button>
           </Col>
         </Row>
       </Form>
@@ -144,4 +147,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default UpdateUser;

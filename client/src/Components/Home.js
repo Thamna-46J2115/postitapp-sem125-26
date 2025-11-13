@@ -2,26 +2,42 @@ import logo from "../Images/logo-t.png";
 import Posts from "./Posts";
 import SharePosts from "./SharePost";
 import User from "./User";
+import Login from "./Login";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Container, Row, Col } from "reactstrap"; //import the Reactstrap Components
 
 const Home = () => {
+  const email = useSelector((state) => state.users.user.email);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!email) {
+      navigate("/login");
+    }
+  }, [email]);
+
   return (
-    <div>
+    <>
       <Row>
         <Col md={3}>
           <User />
         </Col>
+
         <Col md={9}>
           <SharePosts />
         </Col>
       </Row>
+
       <Row>
         <Col md={3}></Col>
+
         <Col md={9}>
           <Posts />
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 
