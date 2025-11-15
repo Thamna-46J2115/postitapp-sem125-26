@@ -10,6 +10,57 @@ const initialState = {
   isSuccess: false,
   isError: false,
 };
+// Define an async thunk to update the user profile in the Redux store
+
+export const updateUserProfile = createAsyncThunk(
+  "user/updateUserProfile", // Action type string for Redux
+
+  async (userData) => {
+    try {
+      // Log the user data being sent for debugging purposes
+
+      // console.log(userData);
+
+      // Send a PUT request to the server to update the user profile
+
+      const response = await axios.put(
+        `http://localhost:3001/updateUserProfile/${userData.email}`, // API endpoint for updating user profile
+
+        {
+          // Request payload with user data to be updated
+
+          email: userData.email,
+
+          name: userData.name,
+
+          password: userData.password,
+
+          profilePic: userData.profilePic,
+        },
+
+        {
+          headers: {
+            //headers is necessary when uploading files with form-data in a request.
+
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Extract the updated user data from the server response
+
+      const user = response.data.user;
+
+      // Return the updated user data, which will be used by Redux to update the state
+
+      return user;
+    } catch (error) {
+      // Log any errors that occur during the request
+
+      console.log(error);
+    }
+  }
+);
 
 //Create the thunk
 export const registerUser = createAsyncThunk(
@@ -74,6 +125,7 @@ export const userSlice = createSlice({
   //     });
   //   },
   // },
+
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -109,6 +161,22 @@ export const userSlice = createSlice({
       })
       .addCase(logout.rejected, (state) => {
         state.isLoading = false;
+        state.isError = true;
+      })
+
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+
+        state.isLoading = false;
+      })
+
+      .addCase(updateUserProfile.rejected, (state) => {
+        state.isLoading = false;
+
         state.isError = true;
       });
   },

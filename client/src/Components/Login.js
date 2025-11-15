@@ -1,6 +1,6 @@
 import loginimage from "../Images/loginImage.jpg";
 import "../App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -12,44 +12,40 @@ import {
   Input,
   Form,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../Features/UserSlice";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setemail] = useState();
-  const [password, setpassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.users.user);
-  const isSuccess = useSelector((state) => state.users.isSuccess);
-  const isError = useSelector((state) => state.users.isError);
+  const { user, isSuccess, isError } = useSelector((state) => state.users);
 
   const handleLogin = () => {
-    const userData = {
-      email,
-      password,
-    };
+    const userData = { email, password };
     dispatch(login(userData));
   };
 
   useEffect(() => {
     if (isError) {
-      navigate("/login");
-    }
-    if (isSuccess) {
+      // Optionally show an error message here
+      console.log("Login failed");
+    } else if (isSuccess) {
       navigate("/");
-    } else {
-      navigate("/login");
     }
-  }, [user, isError, isSuccess]);
+  }, [isError, isSuccess, navigate]);
 
   return (
     <Container>
-      <Form>
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+      >
         <Row>
           <Col md={3}>
             <FormGroup>
@@ -59,7 +55,8 @@ const Login = () => {
                 name="email"
                 placeholder="Enter your Email"
                 type="email"
-                onChange={(e) => setemail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </FormGroup>
           </Col>
@@ -72,9 +69,10 @@ const Login = () => {
               <Input
                 id="password"
                 name="password"
-                placeholder="Enter you password"
+                placeholder="Enter your password"
                 type="password"
-                onChange={(e) => setpassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </FormGroup>
           </Col>
@@ -82,7 +80,7 @@ const Login = () => {
 
         <Row>
           <Col md={3}>
-            <Button onClick={() => handleLogin()}>Login</Button>
+            <Button type="submit">Login</Button>
           </Col>
         </Row>
 
