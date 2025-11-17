@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import userImage from "../Images/user.png";
 import { updateUserProfile } from "../Features/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Location from "./Location";
 import {
   Form,
   FormGroup,
@@ -68,6 +69,11 @@ const Profile = () => {
             width="120"
             style={{ borderRadius: "50%" }}
           />
+          <Row>
+            <Col md={3}>
+              <Location />
+            </Col>
+          </Row>
         </Col>
 
         <Col md={5}>

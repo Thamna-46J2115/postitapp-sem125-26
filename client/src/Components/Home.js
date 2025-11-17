@@ -6,6 +6,7 @@ import Login from "./Login";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+
 import { Container, Row, Col } from "reactstrap"; //import the Reactstrap Components
 
 const Home = () => {
