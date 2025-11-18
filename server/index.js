@@ -9,16 +9,26 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path";
-
+import * as ENV from "./config.js";
 const app = express();
 app.use(express.json());
-app.use(cors());
+//Middleware
+
+const corsOptions = {
+  origin: ENV.CLIENT_URL, //client URL local
+
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+
+  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+};
+app.use(cors(corsOptions));
 
 //Database connection
 
-const connectString =
-  "mongodb+srv://admin:1234@postitcluster.a7vadki.mongodb.net/postITDb?appName=PostITCluster";
+//const connectString =
+//"mongodb+srv://admin:1234@postitcluster.a7vadki.mongodb.net/postITDb?appName=PostITCluster";
 
+const connectString = `mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=${ENV.DB_APPNAME}`;
 mongoose.connect(connectString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -289,7 +299,7 @@ app.put(
 app.post("/logout", async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
-
-app.listen(3001, () => {
-  console.log("You are connected");
+const port = ENV.PORT || 3001;
+app.listen(port, () => {
+  console.log(`You are connected at port: ${port}`);
 });
